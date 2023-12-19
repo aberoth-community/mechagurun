@@ -1,0 +1,10 @@
+{
+  "command": {
+    "ping": {
+      "name": "ping",
+      "description": "Exibir latência do servidor."
+    }
+  },
+  "embed": {},
+  "quip": {}
+}

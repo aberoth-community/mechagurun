@@ -1,3 +1,10 @@
+# Editor Files
+.vs*/
+
+# Lockfiles
+package-lock.json
+yarn.lock
+
 # Logs
 logs
 *.log

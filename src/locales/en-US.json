@@ -1,0 +1,10 @@
+{
+  "command": {
+    "ping": {
+      "name": "ping",
+      "description": "Display server latency."
+    }
+  },
+  "embed": {},
+  "quip": {}
+}

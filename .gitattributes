@@ -1,0 +1,21 @@
+* text=auto
+
+# Document
+*.md                          text
+*.txt                         text
+
+# Config
+*.json                        text
+*.yaml                        text
+*.yml                         text
+
+pnpm-lock.yaml                text -diff
+
+# Shell
+*.sh                          text eol=lf
+.husky/**/*                   text eol=lf
+
+# Source
+*.prisma                      text
+*.js                          text
+*.ts                          text
