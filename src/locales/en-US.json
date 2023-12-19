@@ -3,6 +3,10 @@
     "ping": {
       "name": "ping",
       "description": "Display server latency."
+    },
+    "say": {
+      "name": "say",
+      "description": "Send message."
     }
   },
   "embed": {},

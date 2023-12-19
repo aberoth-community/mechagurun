@@ -35,6 +35,7 @@ export const i18init = async (dir: string, config: MechaGurunConfiguration): Pro
     load: 'currentOnly',
     resources: await getLocaleResources(dir, languages),
   })
+  i18next.tt = tt
   return languages
 }
 

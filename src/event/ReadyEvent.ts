@@ -36,17 +36,21 @@ export default class ReadyEvent extends Event {
   }
 
   async register(): Promise<void> {
-    const res = (await this.rest.put(
-      typeof this.guildId === 'string'
-        ? Routes.applicationGuildCommands(this.appId, this.guildId)
-        : Routes.applicationCommands(this.appId),
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      { body: this.gurun['_commands'].map((command) => command.slash.toJSON()) },
-    )) as unknown[]
-    logger.debug(`registered ${res.length} command(s)...`, {
-      appId: this.appId,
-      guildId: this.guildId,
-    })
+    try {
+      const res = (await this.rest.put(
+        typeof this.guildId === 'string'
+          ? Routes.applicationGuildCommands(this.appId, this.guildId)
+          : Routes.applicationCommands(this.appId),
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        { body: this.gurun['_commands'].map((command) => command.slash.toJSON()) },
+      )) as unknown[]
+      logger.debug(`registered ${res.length} command(s)...`, {
+        appId: this.appId,
+        guildId: this.guildId,
+      })
+    } catch (error) {
+      logger.error('failed to register commands!', { error })
+    }
   }
 
   async run(): Promise<void> {

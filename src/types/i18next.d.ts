@@ -8,6 +8,9 @@ export interface Locale<T> {
 }
 
 declare module 'i18next' {
+  interface CustomInstanceExtenstions {
+    tt: (key: string) => Record<string, string>
+  }
   interface CustomTypeOptions {
     resources: {
       'en-US': Locale<typeof en_US>

@@ -3,6 +3,10 @@
     "ping": {
       "name": "ping",
       "description": "Exibir latência do servidor."
+    },
+    "say": {
+      "name": "dizer",
+      "description": "Enviar mensagem."
     }
   },
   "embed": {},
