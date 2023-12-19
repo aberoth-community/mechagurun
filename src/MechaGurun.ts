@@ -60,7 +60,7 @@ export default class MechaGurun {
       try {
         const event: Event = new _Event(this)
         this._events.set(event.name, event)
-        logger.debug(`loaded event '${event.name}'`, { name: event.name })
+        logger.debug(` - loaded event '${event.name}'`, { name: event.name })
         this.client[event.once ? 'once' : 'on'](event.name, (...args: unknown[]) => {
           this.handleEvent(event.name, ...args)
         })
@@ -68,6 +68,7 @@ export default class MechaGurun {
         logger.error(`failed to load event at '${path}'!`, err)
       }
     })
+    logger.debug(` - loaded ${this._events.size} event(s)...`)
     // load commands
     this._commands.clear()
     await importEach(join(__dirname, './command'), ({ default: _Command }, path) => {
@@ -77,11 +78,12 @@ export default class MechaGurun {
       try {
         const command: Command = new _Command(this)
         this._commands.set(command.name, command)
-        logger.debug(`loaded command '${command.name}'`, { name: command.name })
+        logger.debug(` - loaded command '${command.name}'`, { name: command.name })
       } catch (err) {
         logger.error(`failed to load command at '${path}'!`, err)
       }
     })
+    logger.debug(` - loaded ${this._commands.size} command(s)...`)
     // login
     await this.client.login(token)
   }

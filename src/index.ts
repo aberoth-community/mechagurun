@@ -8,6 +8,11 @@ import path from 'path'
 import type { MechaGurunConfiguration } from '$types/config'
 
 void (async () => {
+  // log title
+  ;(await import('cfonts')).say('- mechagurun -', {
+    colors: ['yellowBright'],
+    font: 'tiny',
+  })
   logger.info(`starting mechagurun v${MECHAGURUN_VERSION}...`)
   // load environment variables in development mode
   if (process.env.NODE_ENV === 'development') {
@@ -20,7 +25,7 @@ void (async () => {
   )
   // initialize i18next
   const languages = await i18init(path.join(__dirname, './locales'), config)
-  logger.debug(`loaded ${languages.length} localization(s)...`, { languages })
+  logger.debug(` - loaded ${languages.length} localization(s)...`, { languages })
   // start bot
   const gurun = new MechaGurun(config)
   await gurun.start(process.env.DISCORD_BOT_TOKEN)

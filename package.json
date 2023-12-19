@@ -39,6 +39,7 @@
   "homepage": "https://github.com/aberoth-community/mechagurun#readme",
   "dependencies": {
     "@prisma/client": "^5.7.1",
+    "cfonts": "^3.2.0",
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
     "i18next": "^23.7.11",
