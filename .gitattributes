@@ -19,3 +19,9 @@ pnpm-lock.yaml                text -diff
 *.prisma                      text
 *.js                          text
 *.ts                          text
+
+# Image
+*.png                         binary
+*.jpeg                        binary
+*.jpg                         binary
+*.svg                         text
