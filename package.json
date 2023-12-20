@@ -9,11 +9,11 @@
     "build": "vite build",
     "clean": "rimraf dist/",
     "fmt": "pnpm --parallel /^fmt:.*/",
-    "fmt:prettier": "prettier -c --write \"**/*.{md,js,json,ts}\"",
+    "fmt:prettier": "prettier -c --write \"**/*.{md,js,json,ts,yaml,yml}\"",
     "fmt:prisma": "prisma format",
     "lint": "pnpm run /^lint:.*/",
     "lint:es": "eslint .",
-    "lint:fmt": "prettier --list-different \"**/*.{md,js,json,ts}\"",
+    "lint:fmt": "prettier --list-different \"**/*.{md,js,json,ts,yaml,yml}\"",
     "test": "vitest --run",
     "prepare": "husky install"
   },
