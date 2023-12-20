@@ -14,6 +14,7 @@ export default class ReadyEvent extends Event {
   readonly appId: string
   /** Discord guild id */
   readonly guildId?: string
+  readonly isLocal: boolean
   /** Discord rest client */
   readonly rest: REST
 
@@ -24,6 +25,7 @@ export default class ReadyEvent extends Event {
       `environment variable 'DISCORD_APP_ID' is required!`,
     )
     this.guildId = process.env.DISCORD_GUILD_ID
+    this.isLocal = typeof this.guildId !== 'undefined'
     this.rest = new REST().setToken(
       assert(
         process.env.DISCORD_BOT_TOKEN,
@@ -47,18 +49,32 @@ export default class ReadyEvent extends Event {
   async register(): Promise<void> {
     try {
       const res = (await this.rest.put(
-        typeof this.guildId === 'string'
-          ? Routes.applicationGuildCommands(this.appId, this.guildId)
+        this.isLocal
+          ? Routes.applicationGuildCommands(this.appId, this.guildId!)
           : Routes.applicationCommands(this.appId),
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        { body: this.gurun['_commands'].map((command) => command.slash.toJSON()) },
+        { body: this.gurun.commands.map((command) => command.slash.toJSON()) },
       )) as unknown[]
-      logger.debug(`registered ${res.length} command(s)...`, {
-        appId: this.appId,
-        guildId: this.guildId,
-      })
+      logger.debug(`registered ${res.length} command(s)...`)
     } catch (error) {
       logger.error('failed to register commands!', { error })
+    }
+  }
+
+  /** Update guild values */
+  async updateGuilds(): Promise<void> {
+    const guilds = await this.gurun.client.guilds.fetch()
+    logger.debug(`updating ${guilds.size} guild(s)...`)
+    for (const guild of guilds.values()) {
+      await this.gurun.db.guild.upsert({
+        create: {
+          name: guild.name,
+          guildId: guild.id,
+        },
+        update: {
+          name: guild.name,
+        },
+        where: { guildId: guild.id },
+      })
     }
   }
 
@@ -68,6 +84,7 @@ export default class ReadyEvent extends Event {
       user.setPresence(this.gurun.config.presence)
     }
     await this.register()
+    await this.updateGuilds()
     logger.info(`logged into discord as '${user.username}#${user.id}'!`)
   }
 }

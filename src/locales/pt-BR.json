@@ -2,7 +2,8 @@
   "command": {
     "ping": {
       "name": "ping",
-      "description": "exibir latência do servidor."
+      "description": "exibir latência do servidor.",
+      "response": ":ping_pong: {{ping}}$t(unit.ms.short)"
     },
     "say": {
       "name": "dizer",
@@ -17,8 +18,46 @@
           "description": "mensagem embutir."
         }
       }
+    },
+    "profile": {
+      "name": "perfil",
+      "description": "mostrar perfil do usuário.",
+      "option": {
+        "user": {
+          "name": "usuario",
+          "description": "usuário selecionado."
+        },
+        "bio": {
+          "name": "biografia",
+          "description": "parágrafo da biografia do perfil."
+        }
+      },
+      "error": {
+        "no_profile": "{{- user}} não tem perfil..."
+      }
     }
   },
-  "embed": {},
-  "quip": {}
+  "embed": {
+    "profile": {
+      "last_active": "ativo pela última vez",
+      "joined": "ingressou"
+    }
+  },
+  "quip": {
+    "reward": "você ganhou {{exp}} $t(unit.exp.long)!"
+  },
+  "unit": {
+    "exp": {
+      "short": "exp",
+      "long": "experiência"
+    },
+    "level": {
+      "short": "lv",
+      "long": "nível"
+    },
+    "ms": {
+      "short": "ms",
+      "long": "milissegundos"
+    }
+  }
 }

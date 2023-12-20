@@ -15,7 +15,10 @@ export default class PingCommand extends Command {
 
   async run(interaction: ChatInputCommandInteraction): Promise<void> {
     await interaction.reply({
-      content: `:ping_pong: ${Math.max(this.gurun.client.ws.ping, 0)}ms`,
+      content: i18next.t('command.ping.response', {
+        ping: Math.max(this.gurun.client.ws.ping, 0),
+        lng: interaction.locale,
+      }),
       ephemeral: false,
     })
   }

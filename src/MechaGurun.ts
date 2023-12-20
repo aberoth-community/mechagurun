@@ -1,10 +1,13 @@
-import { Client, Collection, GatewayIntentBits } from 'discord.js'
-import Event from './event/BaseEvent'
+import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js'
 import Command from './command/BaseCommand'
+import Event from './event/BaseEvent'
+import { PrismaClient } from '@prisma/client'
+import Scheduler from './Scheduler'
 import { i18nextInitialize } from './util/i18next'
 import importEach from './util/import'
 import logger from './util/logger'
 import { join } from 'path'
+import type { ClientEvents } from 'discord.js'
 import type { MechaGurunConfiguration } from './types/config'
 import type { PackageJson } from 'types-package-json'
 
@@ -13,10 +16,18 @@ import type { PackageJson } from 'types-package-json'
  * @class
  */
 export default class MechaGurun {
-  private readonly _commands = new Collection<string, Command>()
-  private readonly _events = new Collection<string, Event>()
+  /** Discord client */
   readonly client: Client
+  /** Prisma database connection */
+  readonly db = new PrismaClient()
+  /** Commands collection */
+  readonly commands = new Collection<string, Command>()
+  /** Events collection */
+  readonly events = new Collection<keyof ClientEvents, Event>()
+  readonly scheduler = new Scheduler()
+  /** MechaGurun configuration */
   readonly config: MechaGurunConfiguration
+  /** package.json */
   readonly packageJSON: Partial<PackageJson>
 
   constructor(config: MechaGurunConfiguration, packageJSON: Partial<PackageJson>) {
@@ -27,7 +38,9 @@ export default class MechaGurun {
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.Guilds,
       ],
+      partials: [Partials.Channel, Partials.GuildMember, Partials.Reaction],
       presence: {
         activities: [],
         status: 'dnd',
@@ -41,7 +54,7 @@ export default class MechaGurun {
    * @param args  Command arguments
    */
   handleCommand(name: string, ...args: unknown[]): void {
-    const command = this._commands.get(name)
+    const command = this.commands.get(name)
     if (typeof command !== 'undefined') {
       command.run(...args).catch((err) => {
         logger.warn(`failed to handle command '${name}'!`, err)
@@ -56,8 +69,8 @@ export default class MechaGurun {
    * @param name  Event name
    * @param args  Event arguments
    */
-  handleEvent(name: string, ...args: unknown[]): void {
-    const event = this._events.get(name)
+  handleEvent(name: keyof ClientEvents, ...args: unknown[]): void {
+    const event = this.events.get(name)
     if (typeof event !== 'undefined') {
       event.run(...args).catch((err) => {
         logger.error(`Failed to handle event '${name}'!`, err)
@@ -72,18 +85,20 @@ export default class MechaGurun {
    * @param token  Discord bot token
    */
   async start(token?: string): Promise<void> {
+    logger.info(`starting mechagurun v${this.packageJSON?.version ?? '???'}...`)
+
     // initialize i18next
     const languages = await i18nextInitialize(join(__dirname, './locales'), this.config)
-    logger.debug(` - loaded ${languages.length} localization file(s)...`, { languages })
+    logger.debug(` - loaded ${languages.length} locales(s)...`)
     // load events
-    this._events.clear()
+    this.events.clear()
     await importEach(join(__dirname, './event'), ({ default: _Event }, path) => {
       if (path.includes('Base') || !(_Event.prototype instanceof Event)) {
         return
       }
       try {
         const event: Event = new _Event(this)
-        this._events.set(event.name, event)
+        this.events.set(event.name, event)
         logger.debug(` - loaded event '${event.name}'`, { name: event.name })
         this.client[event.once ? 'once' : 'on'](event.name, (...args: unknown[]) => {
           this.handleEvent(event.name, ...args)
@@ -92,22 +107,22 @@ export default class MechaGurun {
         logger.error(`failed to load event at '${path}'!`, err)
       }
     })
-    logger.debug(` - loaded ${this._events.size} event(s)...`)
+    logger.debug(` - loaded ${this.events.size} event(s)...`)
     // load commands
-    this._commands.clear()
+    this.commands.clear()
     await importEach(join(__dirname, './command'), ({ default: _Command }, path) => {
       if (path.includes('Base') || !(_Command.prototype instanceof Command)) {
         return
       }
       try {
         const command: Command = new _Command(this)
-        this._commands.set(command.name, command)
+        this.commands.set(command.name, command)
         logger.debug(` - loaded command '${command.name}'`, { name: command.name })
       } catch (err) {
         logger.error(`failed to load command at '${path}'!`, err)
       }
     })
-    logger.debug(` - loaded ${this._commands.size} command(s)...`)
+    logger.debug(` - loaded ${this.commands.size} command(s)...`)
     // login
     await this.client.login(token)
   }

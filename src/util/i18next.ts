@@ -53,7 +53,7 @@ export const i18nextInitialize = async (
     .filter((f) => f.endsWith('.json'))
     .map((f) => basename(f, '.json'))
   await i18next.init({
-    lng: config.localization?.default_language,
+    lng: config?.localization?.default_language,
     fallbackLng: languages,
     load: 'currentOnly',
     resources: await getLocaleResources(dir, languages),

@@ -2,7 +2,8 @@
   "command": {
     "ping": {
       "name": "ping",
-      "description": "display server latency."
+      "description": "display server latency.",
+      "response": ":ping_pong: {{ping}}$t(unit.ms.short)"
     },
     "say": {
       "name": "say",
@@ -17,8 +18,46 @@
           "description": "message embeds."
         }
       }
+    },
+    "profile": {
+      "name": "profile",
+      "description": "Show user profile.",
+      "option": {
+        "user": {
+          "name": "user",
+          "description": "Selected user."
+        },
+        "bio": {
+          "name": "bio",
+          "description": "profile bio paragraph."
+        }
+      },
+      "error": {
+        "no_profile": "{{- user}} doesn't have a profile..."
+      }
     }
   },
-  "embed": {},
-  "quip": {}
+  "embed": {
+    "profile": {
+      "last_active": "last active",
+      "joined": "joined"
+    }
+  },
+  "quip": {
+    "reward": "you have gained {{exp}} $t(unit.exp.long)!"
+  },
+  "unit": {
+    "exp": {
+      "short": "exp",
+      "long": "experience"
+    },
+    "level": {
+      "short": "lv",
+      "long": "level"
+    },
+    "ms": {
+      "short": "ms",
+      "long": "milliseconds"
+    }
+  }
 }

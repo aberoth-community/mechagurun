@@ -22,12 +22,13 @@ model Member {
   id         Int      @id @default(autoincrement())
   memberId   String   @unique
   guildId    String
+  activeAt   DateTime @default(now())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  nickname   String
+  bio        String?
+  nickname   String?
   username   String
   experience Int      @default(0)
-  level      Int      @default(1)
 
   guild Guild @relation(fields: [guildId], references: [guildId])
 }

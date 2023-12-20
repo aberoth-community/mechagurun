@@ -1,8 +1,7 @@
-import { CONFIG_DEFAULTS, CONFIG_FILENAME } from './util/constant/index'
+import { DEFAULT_CONFIG, CONFIG_FILENAME } from './util/constant/index'
 
 import MechaGurun from './MechaGurun'
 import jsonfile from './util/jsonfile'
-import logger from './util/logger'
 import { join } from 'path'
 import type { MechaGurunConfiguration } from './types/config'
 import type { PackageJson } from 'types-package-json'
@@ -25,9 +24,8 @@ void (async () => {
   // load config
   const config: MechaGurunConfiguration = await jsonfile.read(
     join(__dirname, CONFIG_FILENAME),
-    CONFIG_DEFAULTS,
+    DEFAULT_CONFIG,
   )
-  logger.info(`starting mechagurun v${packageJSON?.version ?? '???'}...`)
   // start bot
   const gurun = new MechaGurun(config, packageJSON)
   await gurun.start(process.env.DISCORD_BOT_TOKEN)

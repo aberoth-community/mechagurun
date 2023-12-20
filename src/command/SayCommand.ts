@@ -31,14 +31,12 @@ export default class SayCommand extends Command {
   }
 
   async run(interaction: ChatInputCommandInteraction): Promise<void> {
-    if (interaction.isRepliable()) {
-      const content = interaction.options.getString('content', true)
-      const embeds = interaction.options.getString('embeds')
-      await interaction.reply({
-        content,
-        ephemeral: false,
-        embeds: embeds !== null ? JSON.parse(embeds) : [],
-      })
-    }
+    const content = interaction.options.getString('content', true)
+    const embeds = interaction.options.getString('embeds')
+    await interaction.reply({
+      content,
+      ephemeral: false,
+      embeds: embeds !== null ? JSON.parse(embeds) : [],
+    })
   }
 }
