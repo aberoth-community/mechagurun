@@ -1,22 +1,17 @@
 /* Visit https://aka.ms/tsconfig to read more about this file */
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "baseUrl": "./",
+    "target": "ES2016",
+    "module": "CommonJS",
+    "baseUrl": ".",
     "rootDir": "src",
     "outDir": "dist",
-    "paths": {
-      "$constant/*": ["src/util/constant/*"],
-      "$types/*": ["src/types/*"],
-      "$util/*": ["src/util/*"]
-    },
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
   "exclude": ["src/test/**/*"]

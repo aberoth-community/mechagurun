@@ -1,6 +1,10 @@
 # Editor Files
 .vs*/
 
+# Database files
+*.db
+*.sqlite
+
 # Lockfiles
 package-lock.json
 yarn.lock

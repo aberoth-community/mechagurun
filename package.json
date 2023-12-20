@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "A chat engagement bot for Aberoth!",
   "main": "dist/index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "vite-node src/index.ts",
     "dev": "vite-node --watch src/index.ts",
-    "build": "vite build",
+    "build": "pnpm run /^build:.*/",
+    "build:tsc": "tsc",
+    "build:cpy": "cpy --cwd=src assets locales ../../dist",
     "clean": "rimraf dist/",
-    "fmt": "pnpm --parallel /^fmt:.*/",
+    "fmt": "pnpm /^fmt:.*/",
     "fmt:prettier": "prettier -c --write \"**/*.{md,js,json,ts,yaml,yml}\"",
     "fmt:prisma": "prisma format",
     "lint": "pnpm run /^lint:.*/",
@@ -49,6 +51,7 @@
   "devDependencies": {
     "@types/node": "^20.10.5",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "cpy-cli": "^5.0.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
@@ -63,9 +66,7 @@
     "rimraf": "^5.0.5",
     "types-package-json": "^2.0.39",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10",
     "vite-node": "^1.0.4",
-    "vite-tsconfig-paths": "^4.2.2",
     "vitest": "^1.0.4"
   }
 }

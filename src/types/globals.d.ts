@@ -1,7 +1,8 @@
-declare global {
-  const MECHAGURUN_HOMEPAGE: string
-  const MECHAGURUN_ISSUES: string
-  const MECHAGURUN_VERSION: string
-}
+/* eslint-disable no-var */
 
+import type { PackageJson } from 'types-package-json'
+
+declare global {
+  var packageJSON: Partial<PackageJson>
+}
 export {}

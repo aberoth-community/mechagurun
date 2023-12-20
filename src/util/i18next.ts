@@ -45,7 +45,10 @@ export const tt = (key: string): Record<string, string> => {
  * @param config  MechaGurun configuration
  * @returns       Loaded languages
  */
-export const i18init = async (dir: string, config: MechaGurunConfiguration): Promise<string[]> => {
+export const i18nextInitialize = async (
+  dir: string,
+  config: MechaGurunConfiguration,
+): Promise<string[]> => {
   const languages = readdirSync(dir)
     .filter((f) => f.endsWith('.json'))
     .map((f) => basename(f, '.json'))

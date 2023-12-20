@@ -1,10 +1,12 @@
 import { Client, Collection, GatewayIntentBits } from 'discord.js'
 import Event from './event/BaseEvent'
 import Command from './command/BaseCommand'
-import importEach from '$util/import'
-import logger from '$util/logger'
+import { i18nextInitialize } from './util/i18next'
+import importEach from './util/import'
+import logger from './util/logger'
 import { join } from 'path'
-import type { MechaGurunConfiguration } from '$types/config'
+import type { MechaGurunConfiguration } from './types/config'
+import type { PackageJson } from 'types-package-json'
 
 /**
  * MechaGurun
@@ -15,9 +17,11 @@ export default class MechaGurun {
   private readonly _events = new Collection<string, Event>()
   readonly client: Client
   readonly config: MechaGurunConfiguration
+  readonly packageJSON: Partial<PackageJson>
 
-  constructor(config: MechaGurunConfiguration) {
+  constructor(config: MechaGurunConfiguration, packageJSON: Partial<PackageJson>) {
     this.config = config
+    this.packageJSON = packageJSON
     this.client = new Client({
       intents: [
         GatewayIntentBits.MessageContent,
@@ -68,6 +72,9 @@ export default class MechaGurun {
    * @param token  Discord bot token
    */
   async start(token?: string): Promise<void> {
+    // initialize i18next
+    const languages = await i18nextInitialize(join(__dirname, './locales'), this.config)
+    logger.debug(` - loaded ${languages.length} localization file(s)...`, { languages })
     // load events
     this._events.clear()
     await importEach(join(__dirname, './event'), ({ default: _Event }, path) => {

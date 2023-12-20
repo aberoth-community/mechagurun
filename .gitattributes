@@ -15,9 +15,17 @@ pnpm-lock.yaml                text -diff
 *.sh                          text eol=lf
 .husky/**/*                   text eol=lf
 
-# Source
+# Database
 *.prisma                      text
+*.sqlite                      binary
+*.db                          binary
+
+# Source
+*.cjs                         text
+*.mjs                         text
 *.js                          text
+*.cts                         text
+*.mts                         text
 *.ts                          text
 
 # Image
