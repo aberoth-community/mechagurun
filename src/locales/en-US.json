@@ -2,11 +2,21 @@
   "command": {
     "ping": {
       "name": "ping",
-      "description": "Display server latency."
+      "description": "display server latency."
     },
     "say": {
       "name": "say",
-      "description": "Send message."
+      "description": "send message.",
+      "option": {
+        "content": {
+          "name": "content",
+          "description": "message contents."
+        },
+        "embeds": {
+          "name": "embeds",
+          "description": "message embeds."
+        }
+      }
     }
   },
   "embed": {},

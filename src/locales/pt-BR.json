@@ -2,11 +2,21 @@
   "command": {
     "ping": {
       "name": "ping",
-      "description": "Exibir latência do servidor."
+      "description": "exibir latência do servidor."
     },
     "say": {
       "name": "dizer",
-      "description": "Enviar mensagem."
+      "description": "enviar mensagem.",
+      "option": {
+        "content": {
+          "name": "contente",
+          "description": "conteúdo da mensagem."
+        },
+        "embeds": {
+          "name": "embutir",
+          "description": "mensagem embutir."
+        }
+      }
     }
   },
   "embed": {},

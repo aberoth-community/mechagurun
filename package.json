@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "start": "vite-node --watch src/index.ts",
+    "start": "vite-node src/index.ts",
+    "dev": "vite-node --watch src/index.ts",
     "build": "vite build",
     "clean": "rimraf dist/",
     "fmt": "pnpm --parallel /^fmt:.*/",
