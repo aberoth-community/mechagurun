@@ -1,6 +1,7 @@
 import { ActivityType } from 'discord.js'
 import type { MechaGurunConfiguration } from '../../types/config'
 
+/** Default configuration */
 export const CONFIG_DEFAULTS: MechaGurunConfiguration = {
   presence: {
     activities: [

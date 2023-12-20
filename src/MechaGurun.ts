@@ -4,9 +4,12 @@ import Command from './command/BaseCommand'
 import importEach from '$util/import'
 import logger from '$util/logger'
 import { join } from 'path'
-
 import type { MechaGurunConfiguration } from '$types/config'
 
+/**
+ * MechaGurun
+ * @class
+ */
 export default class MechaGurun {
   private readonly _commands = new Collection<string, Command>()
   private readonly _events = new Collection<string, Event>()
@@ -28,6 +31,11 @@ export default class MechaGurun {
     })
   }
 
+  /**
+   * Handle slash command
+   * @param name  Command name
+   * @param args  Command arguments
+   */
   handleCommand(name: string, ...args: unknown[]): void {
     const command = this._commands.get(name)
     if (typeof command !== 'undefined') {
@@ -39,6 +47,11 @@ export default class MechaGurun {
     }
   }
 
+  /**
+   * Handle Discord event
+   * @param name  Event name
+   * @param args  Event arguments
+   */
   handleEvent(name: string, ...args: unknown[]): void {
     const event = this._events.get(name)
     if (typeof event !== 'undefined') {
@@ -50,6 +63,10 @@ export default class MechaGurun {
     }
   }
 
+  /**
+   * Setup & login
+   * @param token  Discord bot token
+   */
   async start(token?: string): Promise<void> {
     // load events
     this._events.clear()

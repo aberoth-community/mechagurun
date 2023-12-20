@@ -1,3 +1,7 @@
+/**
+ * Base embed
+ * @class
+ */
 export default abstract class BaseEmbed {
   readonly name: string
 

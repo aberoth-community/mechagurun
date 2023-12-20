@@ -4,7 +4,7 @@ import { join } from 'path'
 /**
  * Import directory
  * @param dir    Directory path
- * @param each   Each callback
+ * @param each   For each callback
  */
 export const importEach = async <T = { default: any }>(
   dir: string,

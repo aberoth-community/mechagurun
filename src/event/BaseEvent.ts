@@ -1,6 +1,10 @@
 import type { ClientEvents } from 'discord.js'
 import type MechaGurun from '../MechaGurun'
 
+/**
+ * Base event
+ * @class
+ */
 export default abstract class Event {
   readonly gurun: MechaGurun
   readonly name: keyof ClientEvents

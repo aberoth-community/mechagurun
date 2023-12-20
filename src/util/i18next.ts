@@ -25,20 +25,6 @@ export const getLocaleResources = async (
   return resource
 }
 
-export const i18init = async (dir: string, config: MechaGurunConfiguration): Promise<string[]> => {
-  const languages = readdirSync(dir)
-    .filter((f) => f.endsWith('.json'))
-    .map((f) => basename(f, '.json'))
-  await i18next.init({
-    lng: config.localization?.default_language,
-    fallbackLng: languages,
-    load: 'currentOnly',
-    resources: await getLocaleResources(dir, languages),
-  })
-  i18next.tt = tt
-  return languages
-}
-
 /**
  * Get a translation for all languages
  * @param key  Property key
@@ -51,4 +37,24 @@ export const tt = (key: string): Record<string, string> => {
       [lng]: i18next.t(key, { lng }),
     }
   }, {})
+}
+
+/**
+ * Initialize i18next
+ * @param dir     Locales directory path
+ * @param config  MechaGurun configuration
+ * @returns       Loaded languages
+ */
+export const i18init = async (dir: string, config: MechaGurunConfiguration): Promise<string[]> => {
+  const languages = readdirSync(dir)
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => basename(f, '.json'))
+  await i18next.init({
+    lng: config.localization?.default_language,
+    fallbackLng: languages,
+    load: 'currentOnly',
+    resources: await getLocaleResources(dir, languages),
+  })
+  i18next.tt = tt
+  return languages
 }

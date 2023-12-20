@@ -5,9 +5,16 @@ import logger from '../util/logger'
 
 import type MechaGurun from '../MechaGurun'
 
+/**
+ * Ready event
+ * @class
+ */
 export default class ReadyEvent extends Event {
+  /** Discord app id */
   readonly appId: string
+  /** Discord guild id */
   readonly guildId?: string
+  /** Discord rest client */
   readonly rest: REST
 
   constructor(gurun: MechaGurun) {
@@ -25,6 +32,7 @@ export default class ReadyEvent extends Event {
     )
   }
 
+  /** Clear slash commands */
   async clear(): Promise<void> {
     await this.rest.put(
       typeof this.guildId === 'string'
@@ -35,6 +43,7 @@ export default class ReadyEvent extends Event {
     logger.debug('cleared slash commands')
   }
 
+  /** register chat commands */
   async register(): Promise<void> {
     try {
       const res = (await this.rest.put(
