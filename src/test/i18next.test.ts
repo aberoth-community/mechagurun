@@ -1,6 +1,10 @@
-import { describe, test } from 'vitest'
+import { expect, describe, test } from 'vitest'
+import { getLocaleResources } from '../util/i18next'
+import { join } from 'path'
 
 describe('i18next', () => {
-  test.skip('getLocaleResources should return resources')
-  test.skip('i18init should initialize i18next')
+  test('getLocaleResources should return resources', async () => {
+    const resource = await getLocaleResources(join(__dirname, '../locales'))
+    expect(Object.keys(resource)).toContain('en-US')
+  })
 })
