@@ -4,6 +4,7 @@
   "description": "A chat engagement bot for Aberoth!",
   "main": "dist/index.js",
   "type": "commonjs",
+  "private": true,
   "scripts": {
     "start": "vite-node src/index.ts",
     "dev": "vite-node --watch src/index.ts",
