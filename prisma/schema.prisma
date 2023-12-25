@@ -5,12 +5,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Guild {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   guildId   String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -19,7 +19,7 @@ model Guild {
 }
 
 model Member {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   memberId   String   @unique
   guildId    String
   activeAt   DateTime @default(now())
@@ -31,4 +31,13 @@ model Member {
   experience Int      @default(0)
 
   guild Guild @relation(fields: [guildId], references: [guildId])
+}
+
+model ScheduledTask {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  end       DateTime
+  event     String
+  args      Json?
+  name      String   @unique
 }

@@ -1,5 +1,6 @@
 import type { ClientEvents } from 'discord.js'
 import type MechaGurun from '../MechaGurun'
+import type { SchedulerTask } from '../Scheduler'
 
 /**
  * Base event
@@ -16,5 +17,6 @@ export default abstract class Event {
     this.once = once
   }
 
+  abstract task?(task: SchedulerTask, ...args: any[]): Promise<void>
   abstract run(...args: any[]): Promise<void>
 }

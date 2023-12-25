@@ -17,6 +17,7 @@ export default class ReadyEvent extends Event {
   readonly isLocal: boolean
   /** Discord rest client */
   readonly rest: REST
+  task: undefined
 
   constructor(gurun: MechaGurun) {
     super(gurun, 'ready', true)
@@ -42,7 +43,7 @@ export default class ReadyEvent extends Event {
         : Routes.applicationCommands(this.appId),
       { body: [] },
     )
-    logger.debug('cleared slash commands')
+    logger.debug(' - cleared slash commands')
   }
 
   /** register chat commands */
@@ -54,16 +55,15 @@ export default class ReadyEvent extends Event {
           : Routes.applicationCommands(this.appId),
         { body: this.gurun.commands.map((command) => command.slash.toJSON()) },
       )) as unknown[]
-      logger.debug(`registered ${res.length} command(s)...`)
+      logger.debug(` - registered ${res.length} command(s)...`)
     } catch (error) {
       logger.error('failed to register commands!', { error })
     }
   }
 
-  /** Update guild values */
+  /** Update guild values in db */
   async updateGuilds(): Promise<void> {
     const guilds = await this.gurun.client.guilds.fetch()
-    logger.debug(`updating ${guilds.size} guild(s)...`)
     for (const guild of guilds.values()) {
       await this.gurun.db.guild.upsert({
         create: {

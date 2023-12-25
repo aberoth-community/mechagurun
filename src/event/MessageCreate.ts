@@ -1,8 +1,9 @@
 import Event from './BaseEvent'
 import i18next from 'i18next'
 import logger from '../util/logger'
-import type { Message } from 'discord.js'
+import type { Message, User } from 'discord.js'
 import type MechaGurun from '../MechaGurun'
+import type { SchedulerTask } from 'src/Scheduler'
 
 export default class MessageCreateEvent extends Event {
   static DEFAULT_EXP_MAX = 64
@@ -40,9 +41,7 @@ export default class MessageCreateEvent extends Event {
         update: {
           nickname: message.member?.nickname,
           activeAt: new Date(),
-          experience: {
-            increment,
-          },
+          experience: { increment },
         },
         where: { memberId },
       })
@@ -51,10 +50,14 @@ export default class MessageCreateEvent extends Event {
       })
       logger.debug(`rewarding '${message.author.username}#${memberId}' ${increment} experience`)
     }
-    this.gurun.scheduler.upsert(memberId, {
-      persist: true,
-      time: Math.max(Math.floor(this.timeMax * Math.random()), this.timeMin),
+    await this.gurun.scheduler.upsert(memberId, this.name, {
+      args: [message.author.toJSON() as User],
+      end: new Date(Date.now() + Math.max(Math.floor(this.timeMax * Math.random()), this.timeMin)),
     })
+  }
+
+  async task(task: SchedulerTask, user: User): Promise<void> {
+    logger.debug(`rewards are now available for '${user.username}#${user.id}'!`)
   }
 
   async run(message: Message): Promise<void> {

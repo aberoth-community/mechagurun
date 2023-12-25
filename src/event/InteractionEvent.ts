@@ -12,9 +12,10 @@ export default class InteractionEvent extends Event {
     super(gurun, 'interactionCreate')
   }
 
+  task: undefined
   async run(interaction: Interaction): Promise<void> {
     if (interaction.isCommand()) {
-      this.gurun.handleCommand(interaction.commandName, interaction)
+      this.gurun.handleCommand(interaction.commandName, [interaction])
     }
   }
 }
