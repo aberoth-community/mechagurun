@@ -51,6 +51,8 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
     "@types/node": "^20.10.5",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "cpy-cli": "^5.0.0",
