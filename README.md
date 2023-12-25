@@ -2,7 +2,7 @@
 
 > [🇺🇸](#aberoth-communitymechagurun) [🇧🇷](.github/README/pt-BR.md)
 
-![GitHub Workflows](https://img.shields.io/github/actions/workflow/status/aberoth-community/mechagurun/main.yml)
+![GitHub Workflow](https://img.shields.io/github/actions/workflow/status/aberoth-community/mechagurun/main.yml?label=tests)
 [![Discord](https://img.shields.io/discord/370780258141601792)](https://discord.gg/UtQ85R54R4)
 
 <br />
