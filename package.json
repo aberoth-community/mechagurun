@@ -22,7 +22,7 @@
     "prepare": "husky install"
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 16"
   },
   "engineStrict": true,
   "types": "src/types",

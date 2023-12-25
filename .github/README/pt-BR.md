@@ -18,7 +18,7 @@
 
 ### Requisitos:
 
-- [NodeJS v20+](https://nodejs.org/en)
+- [NodeJS v16+](https://nodejs.org/en)
 - [pnpm](https://pnpm.io/installation#using-corepack) _(opcional)_
 
 ### Instalação:
