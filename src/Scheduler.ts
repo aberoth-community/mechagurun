@@ -7,8 +7,10 @@ import type { Prisma } from '@prisma/client'
 /** Scheduler task options */
 export interface SchedulerTaskOptions {
   args?: Prisma.InputJsonArray | null
-  time: number
+  immediate?: boolean
+  loop?: boolean
   persist?: boolean
+  time: number
 }
 
 /** Scheduled task */
@@ -48,8 +50,12 @@ export default class Scheduler extends EventEmitter {
       timeout: setTimeout(() => {
         Promise.resolve()
           .then(async () => {
-            this.emit('task_end', task, opts.args)
-            await this.removeTask(name)
+            this.emit('task_end', task)
+            if (opts.loop === true) {
+              await this.updateTask(name, event, opts)
+            } else {
+              await this.removeTask(name)
+            }
           })
           .catch((err): void => {
             logger.error(`scheduler failed to emit task '${name}!`, err)
@@ -59,8 +65,8 @@ export default class Scheduler extends EventEmitter {
     return task
   }
 
-  emit(event: 'task_end', task: SchedulerTask, args?: Prisma.InputJsonArray | null): boolean {
-    return super.emit(event, task, ...(args ?? []))
+  emit(event: 'task_end', task: SchedulerTask): boolean {
+    return super.emit(event, task)
   }
 
   on(event: 'task_end', listener: (task: SchedulerTask, ...args: unknown[]) => void): this {
@@ -92,6 +98,9 @@ export default class Scheduler extends EventEmitter {
     }
     const task = this._createTask(name, event, opts)
     this.tasks.set(name, task)
+    if (opts.immediate === true) {
+      this.emit('task_end', task)
+    }
     // persist task
     if (opts.persist === true) {
       await this.gurun.db.scheduledTask.create({
