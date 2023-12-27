@@ -90,7 +90,7 @@ export default class MechaGurun {
   handleTask(task: SchedulerTask, args: unknown[]): void {
     this.events
       .get(task.event)
-      ?.task?.(task, ...args)
+      ?.runTask?.(task, ...args)
       .catch((err) => {
         logger.error(`failed to handle scheduler task '${task.name}'!`, err)
       })
@@ -106,6 +106,12 @@ export default class MechaGurun {
     // initialize i18next
     const languages = await i18nextInitialize(join(__dirname, './locales'), this.config)
     logger.debug(` - loaded ${languages.length} locales(s)...`)
+    // restore scheduler
+    const tasks = await this.scheduler.restoreTasks()
+    this.scheduler.on('task_end', (task, ...args) => {
+      this.handleTask(task, args)
+    })
+    logger.debug(` - scheduler restored ${tasks.length} task(s)...`)
     // load events
     this.events.clear()
     await importEach(join(__dirname, './event'), ({ default: _Event }, path) => {
@@ -139,12 +145,6 @@ export default class MechaGurun {
       }
     })
     logger.debug(` - loaded ${this.commands.size} command(s)...`)
-    // restore scheduler
-    const tasks = await this.scheduler.restoreTasks()
-    this.scheduler.on('task_end', (task, ...args) => {
-      this.handleTask(task, args)
-    })
-    logger.debug(` - scheduler restored ${tasks.length} task(s)...`)
     // login
     await this.client.login(token)
   }

@@ -17,6 +17,6 @@ export default abstract class Event {
     this.once = once
   }
 
-  abstract task?(task: SchedulerTask, ...args: any[]): Promise<void>
+  abstract runTask?(task: SchedulerTask, ...args: any[]): Promise<void>
   abstract run(...args: any[]): Promise<void>
 }

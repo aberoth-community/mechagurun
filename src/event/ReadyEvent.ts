@@ -1,15 +1,14 @@
 import { REST, Routes } from 'discord.js'
-import Event from './BaseEvent'
+import BaseEvent from './BaseEvent'
 import assert from '../util/assert'
 import logger from '../util/logger'
-
 import type MechaGurun from '../MechaGurun'
 
 /**
  * Ready event
  * @class
  */
-export default class ReadyEvent extends Event {
+export default class ReadyEvent extends BaseEvent {
   /** Discord app id */
   readonly appId: string
   /** Discord guild id */
@@ -17,7 +16,7 @@ export default class ReadyEvent extends Event {
   readonly isLocal: boolean
   /** Discord rest client */
   readonly rest: REST
-  task: undefined
+  readonly runTask: undefined
 
   constructor(gurun: MechaGurun) {
     super(gurun, 'ready', true)
@@ -61,10 +60,13 @@ export default class ReadyEvent extends Event {
     }
   }
 
-  /** Update guild values in db */
-  async updateGuilds(): Promise<void> {
-    const guilds = await this.gurun.client.guilds.fetch()
-    for (const guild of guilds.values()) {
+  async run(): Promise<void> {
+    const user = this.gurun.client.user!
+    await this.register()
+    if (typeof this.gurun.config.presence !== 'undefined') {
+      user.setPresence(this.gurun.config.presence)
+    }
+    for (const guild of (await this.gurun.client.guilds.fetch()).values()) {
       await this.gurun.db.guild.upsert({
         create: {
           name: guild.name,
@@ -76,15 +78,6 @@ export default class ReadyEvent extends Event {
         where: { guildId: guild.id },
       })
     }
-  }
-
-  async run(): Promise<void> {
-    const user = this.gurun.client.user!
-    if (typeof this.gurun.config.presence !== 'undefined') {
-      user.setPresence(this.gurun.config.presence)
-    }
-    await this.register()
-    await this.updateGuilds()
     logger.info(`logged into discord as '${user.username}#${user.id}'!`)
   }
 }

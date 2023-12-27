@@ -1,12 +1,12 @@
 import { DEFAULT_CONFIG } from '../util/constant'
-import Event from './BaseEvent'
+import BaseEvent from './BaseEvent'
 import i18next from 'i18next'
 import logger from '../util/logger'
 import type { Message, User } from 'discord.js'
 import type MechaGurun from '../MechaGurun'
 import type { SchedulerTask } from '../Scheduler'
 
-export default class MessageCreateEvent extends Event {
+export default class MessageCreateEvent extends BaseEvent {
   readonly expMin: number
   readonly expMax: number
   readonly timeMin: number
@@ -54,7 +54,7 @@ export default class MessageCreateEvent extends Event {
     })
   }
 
-  async task(task: SchedulerTask, user: User): Promise<void> {
+  async runTask(task: SchedulerTask, user: User): Promise<void> {
     logger.info(`rewards are now available for '${user.username}#${user.id}'!`)
   }
 
