@@ -57,7 +57,7 @@ export default class Scheduler extends EventEmitter {
     return super.emit(event, task, ...(args ?? []))
   }
 
-  on(event: 'task_end', listener: (task: SchedulerTask, ...args: any[]) => void): this {
+  on(event: 'task_end', listener: (task: SchedulerTask, ...args: unknown[]) => void): this {
     return super.on(event, listener)
   }
 
