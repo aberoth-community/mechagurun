@@ -4,12 +4,14 @@ import type { ClientEvents } from 'discord.js'
 import type MechaGurun from './MechaGurun'
 import type { Prisma } from '@prisma/client'
 
+/** Scheduler task options */
 export interface SchedulerTaskOptions {
   args?: Prisma.InputJsonArray | null
-  end: Date
+  time: number
   persist?: boolean
 }
 
+/** Scheduled task */
 export interface SchedulerTask {
   opts: SchedulerTaskOptions
   event: keyof ClientEvents
@@ -30,6 +32,10 @@ export default class Scheduler extends EventEmitter {
     this.gurun = gurun
   }
 
+  private _createDate(ms: number): Date {
+    return new Date(Date.now() + ms)
+  }
+
   private _createTask(
     name: string,
     event: keyof ClientEvents,
@@ -43,12 +49,12 @@ export default class Scheduler extends EventEmitter {
         Promise.resolve()
           .then(async () => {
             this.emit('task_end', task, opts.args)
-            await this.remove(name)
+            await this.removeTask(name)
           })
           .catch((err): void => {
             logger.error(`scheduler failed to emit task '${name}!`, err)
           })
-      }, opts.end.getTime() - Date.now()),
+      }, opts.time),
     }
     return task
   }
@@ -61,38 +67,53 @@ export default class Scheduler extends EventEmitter {
     return super.on(event, listener)
   }
 
-  has(name: string): boolean {
+  hasTask(name: string): boolean {
     return this.tasks.has(name)
   }
 
-  async add(
+  getTask(name: string): SchedulerTask | undefined {
+    return this.tasks.get(name)
+  }
+
+  /**
+   * Add new task
+   * @param name   unique task name
+   * @param event  event name
+   * @param opts   task options
+   * @returns      scheduler task
+   */
+  async addTask(
     name: string,
     event: keyof ClientEvents,
     opts: SchedulerTaskOptions,
   ): Promise<SchedulerTask> {
+    if (this.hasTask(name)) {
+      return this.tasks.get(name)!
+    }
     const task = this._createTask(name, event, opts)
+    this.tasks.set(name, task)
+    // persist task
     if (opts.persist === true) {
       await this.gurun.db.scheduledTask.create({
         data: {
           args: opts.args,
-          end: opts.end,
           event,
           name,
+          time: this._createDate(opts.time),
         },
       })
     }
-    this.tasks.set(name, task)
     return task
   }
 
   /**
-   * Update or insert task
-   * @param name  Task name
-   * @param event Task event
-   * @param opts  Task options
-   * @returns     Task
+   * Update or create task
+   * @param name  task name
+   * @param event task event
+   * @param opts  task options
+   * @returns     task
    */
-  async upsert(
+  async updateTask(
     name: string,
     event: keyof ClientEvents,
     opts: SchedulerTaskOptions,
@@ -105,15 +126,15 @@ export default class Scheduler extends EventEmitter {
     if (opts.persist === true) {
       await this.gurun.db.scheduledTask.upsert({
         create: {
-          end: opts.end,
           event,
           name,
           args: opts.args,
+          time: this._createDate(opts.time),
         },
         update: {
           args: opts.args,
           createdAt: new Date(),
-          end: opts.end,
+          time: this._createDate(opts.time),
         },
         where: { name },
       })
@@ -122,7 +143,11 @@ export default class Scheduler extends EventEmitter {
     return task
   }
 
-  async remove(name: string): Promise<void> {
+  /**
+   * Remove task by name
+   * @param name task name
+   */
+  async removeTask(name: string): Promise<void> {
     const task = this.tasks.get(name)
     if (typeof task !== 'undefined') {
       clearTimeout(task.timeout)
@@ -136,12 +161,12 @@ export default class Scheduler extends EventEmitter {
   }
 
   /** Restore tasks */
-  async restore(): Promise<SchedulerTask[]> {
+  async restoreTasks(): Promise<SchedulerTask[]> {
     const tasks = await this.gurun.db.scheduledTask.findMany({})
     return await Promise.all(
-      tasks.map(async ({ args, end, event, name }): Promise<SchedulerTask> => {
+      tasks.map(async ({ args, event, name, time }): Promise<SchedulerTask> => {
         const task = this._createTask(name, event as keyof ClientEvents, {
-          end,
+          time: time.getTime() - Date.now(),
           args: args as Prisma.InputJsonArray,
           persist: true,
         })

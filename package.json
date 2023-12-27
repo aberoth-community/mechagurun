@@ -17,6 +17,7 @@
     "fmt:prisma": "prisma format",
     "lint": "pnpm run /^lint:.*/",
     "lint:es": "eslint .",
+    "lint:tsc": "tsc --noEmit",
     "lint:fmt": "prettier --list-different \"**/*.{md,js,json,ts,yaml,yml}\"",
     "test": "vitest --run",
     "prepare": "husky install"

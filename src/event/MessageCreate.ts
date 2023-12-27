@@ -26,7 +26,7 @@ export default class MessageCreateEvent extends Event {
     const memberId = message.author.id
     const guildId = message.guild!.id
     const locale = message.guild!.preferredLocale
-    if (!this.gurun.scheduler.has(memberId)) {
+    if (!this.gurun.scheduler.hasTask(memberId)) {
       const increment = Math.max(Math.ceil(this.expMax * Math.random()), this.expMin)
       await this.gurun.db.member.upsert({
         create: {
@@ -48,9 +48,9 @@ export default class MessageCreateEvent extends Event {
       })
       logger.info(`rewarding '${message.author.username}#${memberId}' ${increment} experience`)
     }
-    await this.gurun.scheduler.upsert(memberId, this.name, {
+    await this.gurun.scheduler.updateTask(memberId, this.name, {
       args: [message.author.toJSON() as User],
-      end: new Date(Date.now() + Math.max(this.timeMax * Math.random(), this.timeMin)),
+      time: Math.max(this.timeMax * Math.random(), this.timeMin),
     })
   }
 

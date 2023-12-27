@@ -36,7 +36,7 @@ model Member {
 model ScheduledTask {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
-  end       DateTime
+  time      DateTime
   event     String
   args      Json?
   name      String   @unique

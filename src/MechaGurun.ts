@@ -140,7 +140,7 @@ export default class MechaGurun {
     })
     logger.debug(` - loaded ${this.commands.size} command(s)...`)
     // restore scheduler
-    const tasks = await this.scheduler.restore()
+    const tasks = await this.scheduler.restoreTasks()
     this.scheduler.on('task_end', (task, ...args) => {
       this.handleTask(task, args)
     })
