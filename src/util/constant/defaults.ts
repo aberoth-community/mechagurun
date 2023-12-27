@@ -5,8 +5,10 @@ import type { MechaGurunConfiguration } from '../../types/config'
 export const DEFAULT_CONFIG: MechaGurunConfiguration = {
   profiles: {
     exp_max: 64,
-    exp_min: 8,
+    exp_min: 1,
     level_max: 999,
+    exp_timeout_max: 180e3,
+    exp_timeout_min: 10e3,
   },
   presence: {
     activities: [

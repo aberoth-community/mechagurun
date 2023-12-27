@@ -1,16 +1,12 @@
+import { DEFAULT_CONFIG } from '../util/constant'
 import Event from './BaseEvent'
 import i18next from 'i18next'
 import logger from '../util/logger'
 import type { Message, User } from 'discord.js'
 import type MechaGurun from '../MechaGurun'
-import type { SchedulerTask } from 'src/Scheduler'
+import type { SchedulerTask } from '../Scheduler'
 
 export default class MessageCreateEvent extends Event {
-  static DEFAULT_EXP_MAX = 64
-  static DEFAULT_EXP_MIN = 6
-  static DEFAULT_TIMEOUT_MIN = 10e3
-  static DEFAULT_TIMEOUT_MAX = 240e3
-
   readonly expMin: number
   readonly expMax: number
   readonly timeMin: number
@@ -18,10 +14,12 @@ export default class MessageCreateEvent extends Event {
 
   constructor(gurun: MechaGurun) {
     super(gurun, 'messageCreate')
-    this.expMin = gurun.config.profiles?.exp_min ?? MessageCreateEvent.DEFAULT_EXP_MIN
-    this.expMax = gurun.config.profiles?.exp_max ?? MessageCreateEvent.DEFAULT_EXP_MAX
-    this.timeMax = gurun.config.profiles?.exp_timeout_max ?? MessageCreateEvent.DEFAULT_TIMEOUT_MAX
-    this.timeMin = gurun.config.profiles?.exp_timeout_min ?? MessageCreateEvent.DEFAULT_TIMEOUT_MIN
+    this.expMin = gurun.config.profiles?.exp_min ?? DEFAULT_CONFIG.profiles!.exp_min!
+    this.expMax = gurun.config.profiles?.exp_max ?? DEFAULT_CONFIG.profiles!.exp_max!
+    this.timeMax =
+      gurun.config.profiles?.exp_timeout_max ?? DEFAULT_CONFIG.profiles!.exp_timeout_max!
+    this.timeMin =
+      gurun.config.profiles?.exp_timeout_min ?? DEFAULT_CONFIG.profiles!.exp_timeout_min!
   }
 
   async reward(message: Message): Promise<void> {
@@ -48,16 +46,16 @@ export default class MessageCreateEvent extends Event {
       await message.reply({
         content: i18next.t('quip.reward', { exp: increment, lng: locale }),
       })
-      logger.debug(`rewarding '${message.author.username}#${memberId}' ${increment} experience`)
+      logger.info(`rewarding '${message.author.username}#${memberId}' ${increment} experience`)
     }
     await this.gurun.scheduler.upsert(memberId, this.name, {
       args: [message.author.toJSON() as User],
-      end: new Date(Date.now() + Math.max(Math.floor(this.timeMax * Math.random()), this.timeMin)),
+      end: new Date(Date.now() + Math.max(this.timeMax * Math.random(), this.timeMin)),
     })
   }
 
   async task(task: SchedulerTask, user: User): Promise<void> {
-    logger.debug(`rewards are now available for '${user.username}#${user.id}'!`)
+    logger.info(`rewards are now available for '${user.username}#${user.id}'!`)
   }
 
   async run(message: Message): Promise<void> {
